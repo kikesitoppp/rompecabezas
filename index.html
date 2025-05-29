@@ -2,24 +2,25 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Rompecabezas Especial 💖</title>
+  <title>Rompecabezas de Amor 💕</title>
   <style>
     body {
-      background-color: #ffe6f0;
+      background-color: #fff0f5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-family: 'Arial', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
     }
 
     canvas {
-      border: 4px solid #ff4d88;
+      border: 6px solid #ff66a3;
       margin-top: 20px;
       cursor: grab;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
     }
 
     h1 {
-      color: #ff3385;
+      color: #d63384;
       text-align: center;
     }
 
@@ -28,34 +29,36 @@
       font-size: 20px;
       color: #b30059;
       display: none;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>Arma este rompecabezas y descubre lo que siento por ti 💘</h1>
-  <canvas id="puzzle" width="600" height="450"></canvas>
-  <div id="mensaje">🎉 Bien hecho mi amorrrr, te mereces un besote y la golosino que quierassss 💖</div>
+  <h1>Rompecabezas: ¿Puedes completarlo? 💖</h1>
+  <canvas id="puzzle" width="610" height="1000"></canvas>
+  <div id="mensaje">🎉 ¡Lo lograste! Esta imagen representa algo muy especial entre nosotros 💘</div>
 
   <script>
-    const rows = 3;
-    const cols = 4;
+    const rows = 2;
+    const cols = 5;
     const canvas = document.getElementById('puzzle');
     const ctx = canvas.getContext('2d');
     const pieceWidth = canvas.width / cols;
     const pieceHeight = canvas.height / rows;
     const pieces = [];
     let image = new Image();
-    image.src = 'imagen.jpeg'; // Reemplaza con el nombre correcto
+    image.src = 'imagen.jpeg'; // cambia por el nombre real de tu imagen
 
     let selectedPiece = null;
     let offsetX, offsetY;
 
     image.onload = () => {
+      // Escalamos la imagen a 610x1000
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           pieces.push({
-            sx: x * pieceWidth,
-            sy: y * pieceHeight,
+            sx: x * (image.width / cols),
+            sy: y * (image.height / rows),
             x: Math.random() * (canvas.width - pieceWidth),
             y: Math.random() * (canvas.height - pieceHeight),
             correctX: x * pieceWidth,
@@ -69,7 +72,7 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let p of pieces) {
-        ctx.drawImage(image, p.sx, p.sy, pieceWidth, pieceHeight, p.x, p.y, pieceWidth, pieceHeight);
+        ctx.drawImage(image, p.sx, p.sy, image.width / cols, image.height / rows, p.x, p.y, pieceWidth, pieceHeight);
       }
     }
 
