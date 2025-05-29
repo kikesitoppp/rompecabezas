@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Rompecabezas de Amor 💕</title>
+  <title>Rompecabezas Especial 💘</title>
   <style>
     body {
       background-color: #fff0f5;
@@ -10,6 +10,8 @@
       flex-direction: column;
       align-items: center;
       font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      height: 100vh;
     }
 
     canvas {
@@ -22,21 +24,52 @@
     h1 {
       color: #d63384;
       text-align: center;
+      margin-top: 20px;
     }
 
-    #mensaje {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #b30059;
+    #carta {
       display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 80%;
+      max-width: 500px;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 4px solid #ff69b4;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 25px rgba(255, 105, 180, 0.7);
+      z-index: 10;
       text-align: center;
+      animation: aparecer 1s ease-in-out;
+    }
+
+    #carta h2 {
+      color: #ff3385;
+      margin-bottom: 10px;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Rompecabezas: ¿Puedes completarlo? 💖</h1>
+  <h1>¿Puedes completar este rompecabezas? 💖</h1>
   <canvas id="puzzle" width="610" height="1000"></canvas>
-  <div id="mensaje">🎉 ¡Lo lograste! Esta imagen representa algo muy especial entre nosotros 💘</div>
+
+  <div id="carta">
+    <h2>🎉 ¡Felicidades, lo lograste! 💌</h2>
+    <p>Esta imagen representa algo muy especial... tú sabes lo que significa 💘</p>
+  </div>
 
   <script>
     const rows = 2;
@@ -46,14 +79,13 @@
     const pieceWidth = canvas.width / cols;
     const pieceHeight = canvas.height / rows;
     const pieces = [];
-    let image = new Image();
-    image.src = 'imagen.jpeg'; // cambia por el nombre real de tu imagen
-
+    const tolerance = 30;
     let selectedPiece = null;
     let offsetX, offsetY;
+    let image = new Image();
+    image.src = 'imagen.jpeg'; // Cambia por tu nombre de imagen
 
     image.onload = () => {
-      // Escalamos la imagen a 610x1000
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           pieces.push({
@@ -62,7 +94,8 @@
             x: Math.random() * (canvas.width - pieceWidth),
             y: Math.random() * (canvas.height - pieceHeight),
             correctX: x * pieceWidth,
-            correctY: y * pieceHeight
+            correctY: y * pieceHeight,
+            placed: false
           });
         }
       }
@@ -77,21 +110,15 @@
     }
 
     function checkCompletion() {
-      const tolerance = 15;
-      for (let p of pieces) {
-        if (Math.abs(p.x - p.correctX) > tolerance || Math.abs(p.y - p.correctY) > tolerance) {
-          return false;
-        }
-      }
-      return true;
+      return pieces.every(p => p.placed);
     }
 
     canvas.addEventListener('mousedown', (e) => {
       const mx = e.offsetX;
       const my = e.offsetY;
       for (let i = pieces.length - 1; i >= 0; i--) {
-        let p = pieces[i];
-        if (mx > p.x && mx < p.x + pieceWidth && my > p.y && my < p.y + pieceHeight) {
+        const p = pieces[i];
+        if (!p.placed && mx > p.x && mx < p.x + pieceWidth && my > p.y && my < p.y + pieceHeight) {
           selectedPiece = p;
           offsetX = mx - p.x;
           offsetY = my - p.y;
@@ -109,12 +136,22 @@
     });
 
     canvas.addEventListener('mouseup', () => {
-      selectedPiece = null;
-      draw();
-      if (checkCompletion()) {
-        document.getElementById('mensaje').style.display = 'block';
+      if (selectedPiece) {
+        const dx = Math.abs(selectedPiece.x - selectedPiece.correctX);
+        const dy = Math.abs(selectedPiece.y - selectedPiece.correctY);
+        if (dx < tolerance && dy < tolerance) {
+          selectedPiece.x = selectedPiece.correctX;
+          selectedPiece.y = selectedPiece.correctY;
+          selectedPiece.placed = true;
+        }
+        selectedPiece = null;
+        draw();
+        if (checkCompletion()) {
+          document.getElementById('carta').style.display = 'block';
+        }
       }
     });
   </script>
 </body>
 </html>
+
